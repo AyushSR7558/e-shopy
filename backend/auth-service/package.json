@@ -5,7 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npx prisma generate && npx tsc && nodemon ./dist/src/main",
+    "migrate": "npx prisma db push"
   },
   "keywords": [],
   "author": "",
@@ -14,11 +15,13 @@
     "@prisma/client": "6.19",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.10",
+    "nodemon": "^3.1.11",
     "prisma": "6.19"
   }
 }
