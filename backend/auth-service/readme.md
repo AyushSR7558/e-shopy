@@ -19,3 +19,11 @@ generator client {
 
 ☠️ Don't forgot to do thrid step and remove the output key from the client object there is not need for it
 
+
+### Error Handler(Middleware)
+
+1. Make the AppError Class (Derived class of Error class)
+
+2. Make Sub-Classes of the AppError (ValidationError, ForbiddenError, DatabaseError, RateLimitError, AuthenticationError, NotFoundError)
+
+3. Make a middleware which will handle all the cases
