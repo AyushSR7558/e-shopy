@@ -1,5 +1,5 @@
 import VerificationEmail from "../../emails/Verification.js";
-import { OtpError } from "../error/App.error.js";
+import { OtpError, ValidationError } from "../error/App.error.js";
 import { resend } from "../resend/index.js";
 export const sendEmail = async (name, email, otp) => {
     try {
@@ -16,7 +16,7 @@ export const sendEmail = async (name, email, otp) => {
     }
     catch (emailError) {
         console.log("Error sending otp", emailError);
-        throw new OtpError();
+        throw new ValidationError(`Error in Sending OTP, Try again later`);
     }
 };
 //# sourceMappingURL=sendmail.js.map

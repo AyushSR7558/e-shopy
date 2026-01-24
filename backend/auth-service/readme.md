@@ -27,3 +27,14 @@ generator client {
 2. Make Sub-Classes of the AppError (ValidationError, ForbiddenError, DatabaseError, RateLimitError, AuthenticationError, NotFoundError)
 
 3. Make a middleware which will handle all the cases
+
+
+## User Registration
+
+1. Senitization of User Registration Data
+
+2. Check for the OTP Restriction
+
+3. Send Email
+
+4. Put the otp into the redis
