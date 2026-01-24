@@ -18,13 +18,13 @@ export const validateRegistrationData = (req, role) => {
 };
 export const checkOtpRestriction = async (email, next) => {
     if (await redis.get(`otp_lock:${email}`)) {
-        return next(new ValidationError(`Account locked due to multiple failed attempt. Try agina after some time!`));
+        throw new ValidationError(`Account locked due to multiple failed attempt. Try agina after some time!`);
     }
     if (await redis.get(`otp_spam_lock:${email}`)) {
-        return next(new ValidationError(`Too many OTP request! Please wait one hour before requesting`));
+        throw new ValidationError(`Too many OTP request! Please wait one hour before requesting`);
     }
     if (await redis.get(`otp_cooldown:${email}`)) {
-        return next(new ValidationError("Please wait 1 min before sending the request"));
+        throw new ValidationError("Please wait 1 min before sending the request");
     }
 };
 export const sendOtp = async (name, email) => {
@@ -39,11 +39,11 @@ export const sendOtp = async (name, email) => {
     }
 };
 export const trackOtpRequest = async (email, next) => {
-    const otpRequestKey = redis.get(`otp_request_count:${email}`);
+    const otpRequestKey = await redis.get(`otp_request_count:${email}`);
     const otpRequests = Number(otpRequestKey) || 0;
     if (otpRequests >= 2) {
         await redis.set(`otp_spam_locked`, `locked`, { ex: 3600 }); // Lock for 1hr
-        return next(new ValidationError(`Please wait 1 hr before requesting again`));
+        throw new ValidationError(`Please wait 1 hr before requesting again`);
     }
     await redis.set(`otp_request_count:${email}`, otpRequests + 1, { ex: 3600 }); // Tracking request for one hour
 };

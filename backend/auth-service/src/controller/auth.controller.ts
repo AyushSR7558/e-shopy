@@ -24,13 +24,16 @@ export const userRegistration = async (
     if (existingUser) {
       throw new ValidationError(`User already exist with this email`);
     }
+
     await checkOtpRestriction(email, next);
-+    await trackOtpRequest(email, next);
+    await trackOtpRequest(email, next);
+
     await sendOtp(name, email);
     res.status(200).json({
       message: `Request send successfully`,
     });
-  } catch (error) {
-    return next(error);
+  } catch (error:any) {
+    console.log(error.message);
+    throw error;
   }
 };

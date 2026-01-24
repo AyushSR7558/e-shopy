@@ -11,7 +11,7 @@
     "http"
   ],
   "paths": {
-    "/signup": {
+    "/api/signup": {
       "post": {
         "description": "",
         "parameters": [
@@ -22,10 +22,13 @@
               "type": "object",
               "properties": {
                 "name": {
-                  "example": "any"
+                  "example": "Shankar"
                 },
                 "email": {
-                  "example": "any"
+                  "example": "shankarraut1772@gmail.com"
+                },
+                "password": {
+                  "example": "shankar@123"
                 }
               }
             }

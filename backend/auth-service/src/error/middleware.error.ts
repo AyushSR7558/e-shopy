@@ -10,7 +10,6 @@ import { AppError } from "./App.error.js";
 ) => {
   if (err instanceof AppError) {
     console.log(`Error ${req.method} ${req.url}-${err.message}`);
-
     return res.status(err.statusCode).json({
       status: err.statusCode,
       message: err.message,

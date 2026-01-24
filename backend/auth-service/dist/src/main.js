@@ -31,6 +31,11 @@ app.get("/server-health", (req, res) => {
         message: "Server is healthy",
     });
 });
+app.get("/", (req, res) => {
+    res.json({
+        message: "Hello API",
+    });
+});
 app.use(globalErrorHandler);
 app.listen(6001, () => {
     console.log(`Server listening at PORT:${PORT}`);

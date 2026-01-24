@@ -7,9 +7,8 @@ import cookieParser from "cookie-parser";
 import type { Request, Response } from "express";
 import { sendOtp } from "./utils/auth.helper.js";
 import router from "./route/auth.route.js";
-import swaggerUi from "swagger-ui-express"
-import swaggerDocument  from"./swagger-output.json" with {type: "json"}
-
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./swagger-output.json" with { type: "json" };
 
 const app = express();
 
@@ -27,18 +26,24 @@ const PORT = process.env.PORT;
 app.use((req, res, next) => {
   console.log(req.body);
   next();
-})
+});
 
-app.use("/api",router); 
+app.use("/api", router);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.get("/docs-json", (req, res) => {
-  res.json(swaggerDocument)
-})
+  res.json(swaggerDocument);
+});
 
 app.get("/server-health", (req, res) => {
   res.status(200).send({
     message: "Server is healthy",
+  });
+});
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "Hello API",
   });
 });
 
