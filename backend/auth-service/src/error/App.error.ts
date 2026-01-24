@@ -50,8 +50,10 @@ export class DatabaseError extends AppError{
 
 // Rate Limit Error
 
-export class RateLimitError extends AppError{
-    constructor(message:string = "Too many request, try again later") {
-        super(message, 429);
-    }
+export class OtpError extends AppError {
+  constructor(
+    message: string = "Failed to send OTP. Please try again."
+  ) {
+    super(message, 500);
+  }
 }

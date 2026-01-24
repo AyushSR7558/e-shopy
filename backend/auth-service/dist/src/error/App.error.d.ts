@@ -19,7 +19,7 @@ export declare class ForbiddenError extends AppError {
 export declare class DatabaseError extends AppError {
     constructor(message?: string);
 }
-export declare class RateLimitError extends AppError {
+export declare class OtpError extends AppError {
     constructor(message?: string);
 }
 //# sourceMappingURL=App.error.d.ts.map
