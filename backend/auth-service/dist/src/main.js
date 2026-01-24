@@ -22,10 +22,10 @@ app.use((req, res, next) => {
     next();
 });
 app.use("/api", router);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.get("/docs-json", (req, res) => {
     res.json(swaggerDocument);
 });
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.get("/server-health", (req, res) => {
     res.status(200).send({
         message: "Server is healthy",
@@ -35,6 +35,10 @@ app.get("/", (req, res) => {
     res.json({
         message: "Hello API",
     });
+});
+app.use((req, res, next) => {
+    console.log("MIDDLEWARE HIT:", req.method, req.url);
+    next();
 });
 app.use(globalErrorHandler);
 app.listen(6001, () => {

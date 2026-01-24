@@ -6,8 +6,10 @@ const doc = {
     description: "Automatic generate Swagger docs",
     version: "1.0.0",
   },
-  host: "locahost:6001",
+  
+  host: "localhost:6001",
   schemes: ["http"],
+  basePath:"/api"
 };
 
 const outputfile = "./swagger-output.json";

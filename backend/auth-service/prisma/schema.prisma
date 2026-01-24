@@ -23,18 +23,17 @@ model User {
   name      String
   email     String   @unique
   password  String?
-  avatarId  String?  @unique @db.ObjectId
   following String[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  avatar Image? @relation(fields: [avatarId], references: [id])
+  images Image[]
 }
 
 model Image {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
   fileId String
   url    String
+  userId  String @unique
 
-  user User?   // 👈 back-reference ONLY (no relation args)
+  user User?  @relation(fields: [userId], references: [id])  // 👈 back-reference ONLY (no relation args)
 }

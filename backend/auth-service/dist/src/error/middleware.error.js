@@ -3,7 +3,6 @@ import { AppError } from "./App.error.js";
 const globalErrorHandler = (err, req, res, next) => {
     if (err instanceof AppError) {
         console.log(`Error ${req.method} ${req.url}-${err.message}`);
-        console.log(`Error`);
         return res.status(err.statusCode).json({
             status: err.statusCode,
             message: err.message,
