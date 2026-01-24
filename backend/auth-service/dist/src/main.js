@@ -6,6 +6,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { sendOtp } from "./utils/auth.helper.js";
 import router from "./route/auth.route.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./swagger-output.json" with { type: "json" };
 const app = express();
 app.use(cors({
     origin: "*",
@@ -19,12 +21,11 @@ app.use((req, res, next) => {
     console.log(req.body);
     next();
 });
-app.get("/", (req, res) => {
-    res.json({
-        message: `Hello Api`,
-    });
-});
 app.use("/api", router);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.get("/docs-json", (req, res) => {
+    res.json(swaggerDocument);
+});
 app.get("/server-health", (req, res) => {
     res.status(200).send({
         message: "Server is healthy",

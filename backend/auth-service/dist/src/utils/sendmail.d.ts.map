@@ -1,1 +1,1 @@
-{"version":3,"file":"sendmail.d.ts","sourceRoot":"","sources":["../../../src/utils/sendmail.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,+BAA+B,CAAC;AAEjE,eAAO,MAAM,SAAS,GACpB,MAAM,MAAM,EACZ,OAAO,MAAM,EACb,KAAK,MAAM,KACV,OAAO,CAAC,WAAW,CAiBrB,CAAC"}
+{"version":3,"file":"sendmail.d.ts","sourceRoot":"","sources":["../../../src/utils/sendmail.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,+BAA+B,CAAC;AAEjE,eAAO,MAAM,SAAS,GACpB,MAAM,MAAM,EACZ,OAAO,MAAM,EACb,KAAK,MAAM,KACV,OAAO,CAAC,WAAW,CAgBrB,CAAC"}

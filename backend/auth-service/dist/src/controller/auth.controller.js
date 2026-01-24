@@ -13,11 +13,8 @@ export const userRegistration = async (req, res, next) => {
         if (existingUser) {
             throw new ValidationError(`User already exist with this email`);
         }
-        console.log("Check Otp Restriction");
         await checkOtpRestriction(email, next);
-        console.log("Track Reqest");
-        await trackOtpRequest(email, next);
-        console.log("Send OTP");
+        +await trackOtpRequest(email, next);
         await sendOtp(name, email);
         res.status(200).json({
             message: `Request send successfully`,

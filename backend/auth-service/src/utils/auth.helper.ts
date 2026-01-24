@@ -10,7 +10,7 @@ const emailReg: RegExp = /^\S+@\S+\.\S+$/;
 interface SignupBody {
   name: string;
   email: string;
-  password: string;
+  password?: string;
   phone_number?: string;
   country?: string;
 }
