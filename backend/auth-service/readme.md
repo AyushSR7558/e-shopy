@@ -38,3 +38,15 @@ generator client {
 3. Send Email
 
 4. Put the otp into the redis
+
+# login 
+
+0. Install jsonwebtoken 
+
+1. Take password and email as input
+
+2. Check if email is present in db
+
+3. Check whether correponsiding passoword of the email in db match with the input password
+
+4. Send the token to the user

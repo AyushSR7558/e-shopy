@@ -10,7 +10,7 @@ const emailReg: RegExp = /^\S+@\S+\.\S+$/;
 interface SignupBody {
   name: string;
   email: string;
-  password?: string;
+  password: string;
   phone_number?: string;
   country?: string;
 }
@@ -94,6 +94,7 @@ export const trackOtpRequest = async (email: string, next: NextFunction) => {
 
 export const verifyOtp = async (req: Request, next: NextFunction) => {
   try {
+    
     const { otp, email } = req.body;
     const storedOtp = await redis.get(`otp:${email}`);
     if (!storedOtp) {
