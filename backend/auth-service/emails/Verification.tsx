@@ -53,9 +53,9 @@ export default function VerificationEmail({ username, otp }: VerificationEmailPr
         {/* Header */}
         <Section style={styles.header}>
           <Heading as="h1" style={styles.logo}>
-            🔐 SecureApp
+            🔐 Eshopy
           </Heading>
-          <Text style={styles.tagline}>Secure Account Verification</Text>
+          <Text style={styles.tagline}>Account Verification</Text>
         </Section>
 
         <Hr style={styles.divider} />
@@ -70,7 +70,7 @@ export default function VerificationEmail({ username, otp }: VerificationEmailPr
           
           <Row>
             <Text style={styles.paragraph}>
-              Welcome to SecureApp! To complete your registration and start using your account, 
+              Welcome to E-shopy! To complete your registration and start using your account, 
               please verify your email address using the code below:
             </Text>
           </Row>
@@ -85,6 +85,7 @@ export default function VerificationEmail({ username, otp }: VerificationEmailPr
           <Row>
             <Text style={styles.paragraph}>
               Enter this code on the verification page to complete your registration.
+              Do not share this code with anyone
             </Text>
           </Row>
 
