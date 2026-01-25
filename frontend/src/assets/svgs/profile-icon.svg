@@ -1,0 +1,47 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#667EEA" />
+            <stop offset="100%" stop-color="#764BA2" />
+        </linearGradient>
+        <linearGradient id="highlightGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9" />
+            <stop offset="100%" stop-color="#F7FAFC" stop-opacity="0.8" />
+        </linearGradient>
+        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+            <feOffset dx="0" dy="2" result="offsetblur" />
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.15" />
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+    </defs>
+    
+    <!-- Background with shadow -->
+    <circle cx="60" cy="60" r="52" fill="url(#bgGradient)" filter="url(#shadow)" />
+    
+    <!-- Inner highlight -->
+    <circle cx="60" cy="60" r="46" fill="none" stroke="white" stroke-opacity="0.1" stroke-width="4" />
+    
+    <!-- Head with subtle shine -->
+    <circle cx="60" cy="42" r="14" fill="url(#highlightGradient)" stroke="white" stroke-width="1.5" />
+    
+    <!-- Head shine effect -->
+    <ellipse cx="55" cy="38" rx="4" ry="2" fill="white" fill-opacity="0.4" />
+    
+    <!-- Body with depth -->
+    <path d="M45 75 C45 60, 75 60, 75 75 L75 92 C75 98, 45 98, 45 92 L45 75 Z" 
+          fill="url(#highlightGradient)" 
+          stroke="white" 
+          stroke-width="1.5" />
+    
+    <!-- Shoulders -->
+    <path d="M48 62 L72 62" stroke="white" stroke-width="2" stroke-linecap="round" />
+    
+    <!-- Subtle inner shadow for depth -->
+    <path d="M45 75 C45 60, 75 60, 75 75" stroke="rgba(0,0,0,0.05)" stroke-width="1" />
+</svg>
