@@ -66,7 +66,7 @@ export const sendOtp = async (
 ) => {
   try {
     const otp = crypt.randomInt(1000, 9999).toString();
-    await sendEmail(name, email, "1234");
+    await sendEmail(name, email, otp);
     await redis.set(`otp:${email}`, otp, { ex: 300 });
     await redis.set(`otp_cooldown:${email}`, "1", { ex: 60 });
   } catch (error) {
@@ -81,6 +81,7 @@ export const trackOtpRequest = async (email: string, next: NextFunction) => {
 
     if (otpRequests >= 2) {
       await redis.set(`otp_spam_locked:${email}`, `locked`, { ex: 3600 }); // Lock for 1hr
+      await redis.del(`otp_request_count:${email}`);
       throw new ValidationError(`Please wait 1 hr before requesting again`);
     }
 
