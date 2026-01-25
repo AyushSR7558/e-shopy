@@ -91,10 +91,8 @@ export const trackOtpRequest = async (email: string, ) => {
   }
 };
 
-export const verifyOtp = async (req: Request) => {
+export const verifyOtp = async (email:string, otp:string) => {
   try {
-    
-    const { otp, email } = req.body;
     const storedOtp = await redis.get(`otp:${email}`);
     if (!storedOtp) {
       throw new ValidationError(`Invalid or expired Otp`);

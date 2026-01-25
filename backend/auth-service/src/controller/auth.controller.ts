@@ -68,7 +68,7 @@ export const verifyUser = async (
     if (!emailRegex.test(email)) {
       throw new ValidationError(`Invalid Email`);
     }
-    await verifyOtp(req);
+    await verifyOtp(email, otp);
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: { name, password: hashedPassword, email },
@@ -92,7 +92,7 @@ export const login = async (
 
     if (!email || !password) {
       throw new ValidationError(
-        `Insufficient data, email and password is required`,
+        `Insufficient data! email and password is required`,
       );
     }
 
@@ -167,6 +167,77 @@ export const forgotPassword = async (
     await sendOtp(user.name, email);
     res.status(200).json({
       message: "OTP send to your email. Please verify your account!",
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const verifyUserForgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      throw new ValidationError(
+        `Insufficient data! email and otp is required`,
+      );
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new ValidationError(`User with this email is not registered`);
+    }
+    await verifyOtp(email, otp);
+
+    res.status(200).json({
+      message: "OTP verified. You can now reset your password"
+    })
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetUserPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { email, newPassword } = req.body;
+    if (!email || !newPassword) {
+      throw new ValidationError(
+        `Insufficient data! email and newPassword is required.`,
+      );
+    }
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      throw new ValidationError(`User is not registered to eshopy`);
+    }
+    const oldPasswordhash = user.password;
+
+    const isSamePassword = await bcrypt.compare(newPassword, oldPasswordhash);
+    if (isSamePassword) {
+      throw new ValidationError(`New password cannot have the smae value`);
+    }
+    const newHashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({
+      where: { email },
+      data: {
+        password: newHashedPassword,
+      },
+    });
+
+    res.send(200).json({
+      message: "Password reset successfully",
     });
   } catch (error) {
     return next(error);
