@@ -11,6 +11,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { AuthenticationError, ValidationError } from "../error/App.error.js";
 import { setCookie } from "../cookie/setCookie.js";
+import { error } from "console";
 
 export const userRegistration = async (
   req: Request,
@@ -29,10 +30,10 @@ export const userRegistration = async (
       throw new ValidationError(`User already exist with this email`);
     }
 
-    await checkOtpRestriction(email, next);
-    await trackOtpRequest(email, next);
+    await checkOtpRestriction(email);
+    await trackOtpRequest(email);
 
-    await sendOtp(name, email, next);
+    await sendOtp(name, email);
     return res.status(200).json({
       message: `Request send successfully`,
     });
@@ -67,7 +68,7 @@ export const verifyUser = async (
     if (!emailRegex.test(email)) {
       throw new ValidationError(`Invalid Email`);
     }
-    await verifyOtp(req, next);
+    await verifyOtp(req);
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: { name, password: hashedPassword, email },
@@ -122,12 +123,12 @@ export const login = async (
     );
     const updatedUser = await prisma.user.update({
       where: {
-        id: user.id
+        id: user.id,
       },
       data: {
-        refreshToken: refreshToken
-      }
-    })
+        refreshToken: refreshToken,
+      },
+    });
     setCookie(res, "refresh_token", refreshToken);
     setCookie(res, "access_token", accessToken);
 
@@ -138,6 +139,35 @@ export const login = async (
     });
 
     // Store the refresh and access token in the httpOnly secure
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      throw new ValidationError(`Insufficinet data, email is required!`);
+    }
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!user) {
+      throw new ValidationError(`User with this email is not registered`);
+    }
+    await checkOtpRestriction(email);
+    await trackOtpRequest(email);
+    await sendOtp(user.name, email);
+    res.status(200).json({
+      message: "OTP send to your email. Please verify your account!",
+    });
   } catch (error) {
     return next(error);
   }

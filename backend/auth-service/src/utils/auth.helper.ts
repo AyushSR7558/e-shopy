@@ -1,4 +1,4 @@
-import type { NextFunction, Request } from "express";
+import type { Request } from "express";
 import { AppError, OtpError, ValidationError } from "../error/App.error.js";
 import crypt from "crypto";
 import { redis } from "../redis/index.js";
@@ -38,7 +38,6 @@ export const validateRegistrationData = (
 
 export const checkOtpRestriction = async (
   email: string,
-  next: NextFunction,
 ) => {
   try {
     if (await redis.get(`otp_lock:${email}`)) {
@@ -62,7 +61,6 @@ export const checkOtpRestriction = async (
 export const sendOtp = async (
   name: string,
   email: string,
-  next: NextFunction,
 ) => {
   try {
     const otp = crypt.randomInt(1000, 9999).toString();
@@ -74,7 +72,7 @@ export const sendOtp = async (
   }
 };
 
-export const trackOtpRequest = async (email: string, next: NextFunction) => {
+export const trackOtpRequest = async (email: string, ) => {
   try {
     const otpRequestKey = await redis.get(`otp_request_count:${email}`);
     const otpRequests = Number(otpRequestKey) || 0;
@@ -93,7 +91,7 @@ export const trackOtpRequest = async (email: string, next: NextFunction) => {
   }
 };
 
-export const verifyOtp = async (req: Request, next: NextFunction) => {
+export const verifyOtp = async (req: Request) => {
   try {
     
     const { otp, email } = req.body;
