@@ -9,6 +9,8 @@ import OutllookIcon from "../../../assets/svgs/outlook.svg";
 import Image from "next/image";
 import { error } from "console";
 import { Eye, EyeClosed, EyeClosedIcon, EyeIcon, EyeOff } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 type FormData = {
   name: string;
@@ -28,10 +30,37 @@ const Signup = () => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
 
-  const resendOtp = () => {
+  const startResendTimer = () => {
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setCanResend(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
 
-  }
+  const singupMutation = useMutation({
+    mutationFn: async (data: FormData) => {
+      const response = axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user-registration`,
+        data,
+      );
+      return response;
+    },
+    onSuccess: (_, formData) => {
+      setUserData(formData);
+      setShowOtp(true);
+      setCanResend(false);
+      setTimer(60);
+      startResendTimer();
+    },
+  });
 
+  const resendOtp = () => {};
 
   const handleOtpChange = (index: number, value: string) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -47,16 +76,17 @@ const Signup = () => {
     index: number,
     e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {const handleOtpChange = (index: number, value: string) => {
-    if (!/^[0-9]?$/.test(value)) return;
-    const newOtp = [...otp];
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      const handleOtpChange = (index: number, value: string) => {
+        if (!/^[0-9]?$/.test(value)) return;
+        const newOtp = [...otp];
 
-    newOtp[index] = value;
-    setOtp(newOtp);
-    if (value && index < otp.length - 1) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
+        newOtp[index] = value;
+        setOtp(newOtp);
+        if (value && index < otp.length - 1) {
+          inputRefs.current[index + 1]?.focus();
+        }
+      };
       inputRefs.current[index - 1]?.focus();
     }
   };
@@ -67,6 +97,7 @@ const Signup = () => {
   } = useForm<FormData>();
   const onSubmit = (data: FormData) => {
     console.log(data);
+    singupMutation.mutate(data);
   };
   return (
     <div className="w-full min-h-[85vh] py-10 bg-[#f1f1f1]">
@@ -188,7 +219,9 @@ const Signup = () => {
                     type="tel"
                     inputMode="numeric"
                     key={index}
-                    ref ={(el) => {(inputRefs.current[index] = el)}}
+                    ref={(el) => {
+                      inputRefs.current[index] = el;
+                    }}
                     maxLength={1}
                     autoFocus={index === 0}
                     className="w-12 h-12 text-center border border-gray-300 outline-none rounded-xl"
@@ -198,9 +231,22 @@ const Signup = () => {
                   />
                 ))}
               </div>
-              <button className="w-full cursor-pointer bg-gray-700 mt-4 rounded-lg text-xl py-2">Verify</button>
+              <button className="w-full cursor-pointer bg-gray-700 mt-4 rounded-lg text-xl py-2">
+                Verify
+              </button>
               <p className="text-center  text-sm mt-4">
-                  {canResend ?<><button onClick={resendOtp} className="text-blue-500 cursor-pointer">Resend Otp</button></> :<>`Resend Otp ${timer}</>}
+                {canResend ? (
+                  <>
+                    <button
+                      onClick={resendOtp}
+                      className="text-blue-500 cursor-pointer"
+                    >
+                      Resend Otp
+                    </button>
+                  </>
+                ) : (
+                  <>`Resend Otp ${timer}</>
+                )}
               </p>
             </div>
           )}
