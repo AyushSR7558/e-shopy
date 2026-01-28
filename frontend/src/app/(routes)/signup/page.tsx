@@ -22,14 +22,14 @@ const Signup = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(false);
   const [canResend, setCanResend] = useState(true);
   const [timer, setTimer] = useState(60);
-  const [showOtp, setShowOtp] = useState(true);
+  const [showOtp, setShowOtp] = useState(false);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [userData, setUserData] = useState<FormData | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
 
   const resendOtp = () => {
-    
+
   }
 
 
@@ -65,7 +65,9 @@ const Signup = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-  const onSubmit = (data: FormData) => {};
+  const onSubmit = (data: FormData) => {
+    console.log(data);
+  };
   return (
     <div className="w-full min-h-[85vh] py-10 bg-[#f1f1f1]">
       <h1 className="text-4xl font-Poppins font-semibold text-gray-700 text-center">

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/component/Header";
-import {Poppins, Roboto} from "next/font/google"
+import { Poppins, Roboto } from "next/font/google";
+import Provider from "@/component/Provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -11,15 +12,14 @@ export const metadata: Metadata = {
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "700", "900"],
-  variable: "--font-roboto"
-})
+  variable: "--font-roboto",
+});
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500","600", "700", "900"],
-  variable: "--font-poppins"
-})
-
+  weight: ["100", "200", "300", "400", "500", "600", "700", "900"],
+  variable: "--font-poppins",
+});
 
 export default function RootLayout({
   children,
@@ -29,8 +29,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${roboto.variable} ${poppins.variable}`}>
-        <Header/>
-        {children}
+        <Provider>
+          <Header />
+          {children}
+        </Provider>
       </body>
     </html>
   );
