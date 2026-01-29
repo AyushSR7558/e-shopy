@@ -8,23 +8,21 @@ import FacebookIcon from "../../../assets/svgs/facebook-icon.svg";
 import OutlookIcon from "../../../assets/svgs/outlook.svg";
 import Image from "next/image";
 import { error } from "console";
-import { Eye, EyeClosed, EyeClosedIcon, EyeIcon, EyeOff } from "lucide-react";
+import { Eye, EyeClosed, EyeClosedIcon, EyeIcon, EyeOff, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { sign } from "crypto";
 import { send } from "process";
 
 type FormData = {
-  name: string;
   email: string;
-  password: string;
 };
 
 type VerifyData = FormData & {
   otp: string;
 };
 
-const Signup = () => {
+const ForgotPassword = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
   const [canResend, setCanResend] = useState(true);
@@ -34,8 +32,6 @@ const Signup = () => {
   const [userData, setUserData] = useState<FormData | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
-  const [serverError, setServerError] = useState("");
-  console.log(timer);
 
   const startResendTimer = () => {
     const interval = setInterval(() => {
@@ -50,10 +46,10 @@ const Signup = () => {
     }, 1000);
   };
 
-  const singupMutation = useMutation({
+  const forgotpasswordMutation = useMutation({
     mutationFn: async (data: FormData) => {
       const response = axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user-registration`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/forgot-password-user`,
         data,
       );
       return response;
@@ -66,28 +62,18 @@ const Signup = () => {
       startResendTimer();
       console.log(res);
     },
-    onError: (error) => {
-      if (error instanceof AxiosError) {
-        setServerError(error.response?.data?.message);
-      } else {
-        setServerError(error.message);
-      }
-      setTimeout(() => {
-        setServerError("");
-      },3000)
-    },
   });
 
   const sendOtpMutation = useMutation({
     mutationFn: async (data: VerifyData) => {
       const response = axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/verify-user`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/verify-forgot-password-user`,
         data,
       );
       return response;
     },
     onSuccess: (res) => {
-      router.push("/login");
+      router.push("/reset-password");
     },
   });
 
@@ -127,25 +113,25 @@ const Signup = () => {
     formState: { errors },
   } = useForm<FormData>();
   const onSubmit = (data: FormData) => {
-    singupMutation.mutate(data);
+    forgotpasswordMutation.mutate(data);
   };
   return (
     <div className="w-full min-h-[85vh] py-10 bg-[#f1f1f1]">
       <h1 className="text-4xl font-Poppins font-semibold text-gray-700 text-center">
-        Signup
+        Forgot Password
       </h1>
       <p className="text-center text-lg font-medium py-3 text-[#00000099]">
-        Home . Signup
+        Home . Forgot-password
       </p>
       <div className="w-full flex justify-center">
         <div className="md:w-[480px] p-8 bg-white shadow rounded-lg">
           <h3 className="text-xl font-poppins font-semibold text-center ">
-            Signup to E-shopy
+            Forgot Password
           </h3>
           <p className="text-gray-500 text-center">
-            Already have account?{" "}
+            Go back to<span> </span>
             <Link href="/login" className="text-blue-500">
-              Login
+            Login
             </Link>
           </p>
           <div className="flex justify-center  gap-5 py-2">
@@ -161,20 +147,6 @@ const Signup = () => {
           {!showOtp ? (
             <div>
               <form onSubmit={handleSubmit(onSubmit)}>
-                <label className="block text-gray-700 mb-1">Name</label>
-                <input
-                  type="text"
-                  placeholder="Ayush Raut"
-                  className="w-full  p-2 border text-gray-500 border-gray-300 outline-0 "
-                  {...register("name", {
-                    required: "Name is required",
-                  })}
-                ></input>
-                {errors.email && (
-                  <p className="text-red-500 text-[12px]">
-                    {String(errors.email.message)}
-                  </p>
-                )}
                 <label className="block text-gray-700 mb-1">Email</label>
                 <input
                   type="email"
@@ -194,47 +166,15 @@ const Signup = () => {
                   </p>
                 )}
                 <div className="my-2">
-                  <label className="block text-gray-700 mb-1">Password</label>
-                  <div className="relative">
-                    <input
-                      type={passwordVisible ? "text" : "password"}
-                      className="w-full  p-2 border text-gray-500 border-gray-300 outline-0 "
-                      placeholder="Min Length 8 char"
-                      {...register("password", {
-                        required: "password is required",
-                        minLength: {
-                          value: 6,
-                          message:
-                            "Password length should be atleast 8 character",
-                        },
-                      })}
-                    ></input>
-                    <button
-                      type="button"
-                      onClick={() => setPasswordVisible(!passwordVisible)}
-                      className="text-black absolute top-0 py-2 right-3 flex  items-center text-gray-400 "
-                    >
-                      {passwordVisible ? <EyeIcon /> : <EyeOff />}
-                    </button>
-                    {errors.password && (
-                      <p className="text-red-500 text-[12px]">
-                        {String(errors.password.message)}
-                      </p>
-                    )}
-                  </div>
                   <div className="mt-4">
                     <button
                       type="submit"
-                      disabled={singupMutation.isPending}
+                      disabled={forgotpasswordMutation.isPending}
                       className="w-full text-lg cursor-pointer bg-gray-700 text-white py-2 rounded-xl"
                     >
-                      {singupMutation.isPending ? "Signing up..." : "Sign up"}
+                      {forgotpasswordMutation.isPending ? "Signing up..." : "Sign up"}
                     </button>
-                    <div className="relative">
-                      {serverError && (
-                        <p className="text-sm top-1 absolute text-red-500">{serverError}</p>
-                      )}
-                    </div>
+   
                   </div>
                 </div>
               </form>
@@ -269,17 +209,14 @@ const Signup = () => {
                   }
                   sendOtpMutation.mutate({
                     otp: otp.join(""),
-                    name: userData?.name!,
                     email: userData?.email!,
-                    password: userData?.password!,
                   });
                 }}
                 disabled={sendOtpMutation.isPending}
                 className="w-full cursor-pointer bg-gray-700 mt-4 rounded-lg text-xl py-2"
               >
-                {sendOtpMutation ? "Verifing" : "Verify"}
+                {sendOtpMutation.isPending? "Verifying..": "Verify"}
               </button>
-
               <p className="text-center  text-sm mt-4">
                 {canResend ? (
                   <>
@@ -298,15 +235,9 @@ const Signup = () => {
           )}
         </div>
       </div>
-      {sendOtpMutation.isError &&
-        sendOtpMutation.error instanceof AxiosError && (
-          <p className="text-sm text-red-500">
-            {sendOtpMutation.error.response?.data?.message ||
-              sendOtpMutation.error.message}
-          </p>
-        )}
+      {sendOtpMutation.isError && sendOtpMutation.error instanceof AxiosError && (<p className="text-sm text-red-500">{sendOtpMutation.error.response?.data?.message || sendOtpMutation.error.message}</p>)}
     </div>
   );
 };
 
-export default Signup;
+export default ForgotPassword;

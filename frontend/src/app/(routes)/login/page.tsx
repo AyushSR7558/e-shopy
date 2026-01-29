@@ -9,6 +9,8 @@ import OutllookIcon from "../../../assets/svgs/outlook.svg";
 import Image from "next/image";
 import { error } from "console";
 import { Eye, EyeClosed, EyeClosedIcon, EyeIcon, EyeOff } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
 
 type FormData = {
   email: string;
@@ -17,15 +19,25 @@ type FormData = {
 
 const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
-  const [serverError, setServerError] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
   const router = useRouter();
+  const loginMutation = useMutation({
+    mutationFn: async (data: FormData) => {
+      const res = axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/login-user`, data);
+      return res;
+    },
+    onSuccess: () => {
+      router.push("/home");
+    },
+  });
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-  const onSubmit = (data: FormData) => {};
+  const onSubmit = (data: FormData) => {
+    loginMutation.mutate(data);
+  };
   return (
     <div className="w-full min-h-[85vh] py-10 bg-[#f1f1f1]">
       <h1 className="text-4xl font-Poppins font-semibold text-gray-700 text-center">
@@ -70,7 +82,9 @@ const Login = () => {
               })}
             ></input>
             {errors.email && (
-              <p className="text-red-500 text-[12px]">{String(errors.email.message)}</p>
+              <p className="text-red-500 text-[12px]">
+                {String(errors.email.message)}
+              </p>
             )}
 
             <label className="block text-gray-700 mb-1">Password</label>
@@ -119,12 +133,17 @@ const Login = () => {
               <button
                 type="submit"
                 className="w-full text-lg cursor-pointer bg-gray-700 text-white py-2 rounded-xl"
+                disabled={loginMutation.isPending}
               >
-                Login
+                {loginMutation.isPending ? "login..." : "Login"}
               </button>
-              {serverError && (
-                <p className="text-red-500 text-sm mt-2 text-[12px]">{serverError}</p>
-              )}
+              {loginMutation.isError &&
+                loginMutation.error instanceof AxiosError && (
+                  <p className="text-red-500 text-sm mt-2 text-[12px]">
+                    {loginMutation.error.response?.data?.message ||
+                      loginMutation.error.message}
+                  </p>
+                )}
             </div>
           </form>
         </div>
