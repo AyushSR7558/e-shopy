@@ -16,7 +16,7 @@ export const validateRegistrationData = (req, role) => {
         throw new ValidationError(`Invalid email address`);
     }
 };
-export const checkOtpRestriction = async (email, next) => {
+export const checkOtpRestriction = async (email) => {
     try {
         if (await redis.get(`otp_lock:${email}`)) {
             throw new ValidationError(`Account locked due to multiple failed attempt. Try agina after some time!`);
@@ -32,10 +32,10 @@ export const checkOtpRestriction = async (email, next) => {
         throw error;
     }
 };
-export const sendOtp = async (name, email, next) => {
+export const sendOtp = async (name, email) => {
     try {
         const otp = crypt.randomInt(1000, 9999).toString();
-        await sendEmail(name, email, "1234");
+        await sendEmail(name, email, otp);
         await redis.set(`otp:${email}`, otp, { ex: 300 });
         await redis.set(`otp_cooldown:${email}`, "1", { ex: 60 });
     }
@@ -43,12 +43,13 @@ export const sendOtp = async (name, email, next) => {
         throw error;
     }
 };
-export const trackOtpRequest = async (email, next) => {
+export const trackOtpRequest = async (email) => {
     try {
         const otpRequestKey = await redis.get(`otp_request_count:${email}`);
         const otpRequests = Number(otpRequestKey) || 0;
         if (otpRequests >= 2) {
             await redis.set(`otp_spam_locked:${email}`, `locked`, { ex: 3600 }); // Lock for 1hr
+            await redis.del(`otp_request_count:${email}`);
             throw new ValidationError(`Please wait 1 hr before requesting again`);
         }
         await redis.set(`otp_request_count:${email}`, otpRequests + 1, {
@@ -59,9 +60,8 @@ export const trackOtpRequest = async (email, next) => {
         throw error;
     }
 };
-export const verifyOtp = async (req, next) => {
+export const verifyOtp = async (email, otp) => {
     try {
-        const { otp, email } = req.body;
         const storedOtp = await redis.get(`otp:${email}`);
         if (!storedOtp) {
             throw new ValidationError(`Invalid or expired Otp`);

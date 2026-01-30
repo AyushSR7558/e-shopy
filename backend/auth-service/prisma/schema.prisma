@@ -27,7 +27,6 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   images Image[]
-  refreshToken String?
 }
 
 model Image {

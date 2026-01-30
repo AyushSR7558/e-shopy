@@ -121,14 +121,7 @@ export const login = async (
         expiresIn: "7d",
       },
     );
-    const updatedUser = await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        refreshToken: refreshToken,
-      },
-    });
+
     setCookie(res, "refresh_token", refreshToken);
     setCookie(res, "access_token", accessToken);
 
@@ -181,9 +174,7 @@ export const verifyUserForgotPassword = async (
   try {
     const { email, otp } = req.body;
     if (!email || !otp) {
-      throw new ValidationError(
-        `Insufficient data! email and otp is required`,
-      );
+      throw new ValidationError(`Insufficient data! email and otp is required`);
     }
 
     const user = await prisma.user.findUnique({ where: { email } });
@@ -193,9 +184,8 @@ export const verifyUserForgotPassword = async (
     await verifyOtp(email, otp);
 
     res.status(200).json({
-      message: "OTP verified. You can now reset your password"
-    })
-
+      message: "OTP verified. You can now reset your password",
+    });
   } catch (error) {
     next(error);
   }
@@ -241,5 +231,51 @@ export const resetUserPassword = async (
     });
   } catch (error) {
     return next(error);
+  }
+};
+
+export const refreshAccessToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { refresh_token } = req.cookies;
+    if (!refresh_token) {
+      throw new AuthenticationError("Refresh token is missing");
+    }
+
+    const { id, role } = jwt.verify(
+      refresh_token,
+      process.env.ACCESS_JWT_SECRET_KEY as string,
+    ) as { id: string; role: string };
+
+    if (!id || !role) {
+      throw new AuthenticationError("Invalid refresh token");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new AuthenticationError("Invalid refresh token");
+    }
+    const accessToken = jwt.sign(
+      { id: user.id, role: "user" },
+      process.env.JWT_SECRET_KEY as string,
+      {
+        expiresIn: "15m",
+      },
+    );
+    setCookie(res, "access_token", accessToken);
+    res.send({
+      sucess: true,
+      message: "Access Token delivered sucessfully",
+    });
+  } catch (err) {
+    return next(err);
   }
 };
