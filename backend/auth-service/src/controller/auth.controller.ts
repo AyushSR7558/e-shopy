@@ -279,3 +279,19 @@ export const refreshAccessToken = async (
     return next(err);
   }
 };
+
+export const getUserInfo = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const user = req.user;
+    res.status(200).send({
+      success: true,
+      user,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
